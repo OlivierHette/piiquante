@@ -58,3 +58,19 @@ exports.deleteSauce = (req, res, next) => {
         })
         .catch(error => res.status(500).json({ error }))
 }
+
+exports.likeSauce = (req, res, next) => {
+    if(req.body.like === 1) {
+        
+    }
+
+    /**
+     * SI true && front envoie 1 && like n'est pas déjà sur 1
+     * ALORS on modifi le paramètre like et on le met sur 1
+     * Sinon si true && front envoie -1 && like n'est pas déjà sur -1
+     * ALORS on modifi le paramètre like et on le met sur -1
+     * SINON si true  && front envoie 0 && like n'est pas déjà sur 0
+     * ALORS on modifi le paramètre like et on le met sur 0
+     * SINON 
+     */
+}
