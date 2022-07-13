@@ -60,17 +60,27 @@ exports.deleteSauce = (req, res, next) => {
 }
 
 exports.likeSauce = (req, res, next) => {
-    if(req.body.like === 1) {
-        
+  if (req.body.like === 1) {
+        Sauce.updateOne({ _id: req.params.id }, { $inc: { likes: req.body.like++ }, $push: { usersLiked: req.body.userId } })
+            .then((sauce) => res.status(200).json({ message: 'Like added !' }))
+            .catch(error => res.status(400).json({ error }))
+    } else if (req.body.like === -1) {
+        Sauce.updateOne({ _id: req.params.id }, { $inc: { dislikes: (req.body.like++) * -1 }, $push: { usersDisliked: req.body.userId } })
+            .then((sauce) => res.status(200).json({ message: 'Dislike added !' }))
+            .catch(error => res.status(400).json({ error }))
+    } else {
+        Sauce.findOne({ _id: req.params.id })
+            .then(sauce => {
+                if (sauce.usersLiked.includes(req.body.userId)) {
+                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersLiked: req.body.userId }, $inc: { likes: -1 } })
+                        .then((sauce) => { res.status(200).json({ message: 'Like deleted !' }) })
+                        .catch(error => res.status(400).json({ error }))
+                } else if (sauce.usersDisliked.includes(req.body.userId)) {
+                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersDisliked: req.body.userId }, $inc: { dislikes: -1 } })
+                        .then((sauce) => { res.status(200).json({ message: 'Dislike deleted !' }) })
+                        .catch(error => res.status(400).json({ error }))
+                }
+            })
+            .catch(error => res.status(400).json({ error }))
     }
-
-    /**
-     * SI true && front envoie 1 && like n'est pas déjà sur 1
-     * ALORS on modifi le paramètre like et on le met sur 1
-     * Sinon si true && front envoie -1 && like n'est pas déjà sur -1
-     * ALORS on modifi le paramètre like et on le met sur -1
-     * SINON si true  && front envoie 0 && like n'est pas déjà sur 0
-     * ALORS on modifi le paramètre like et on le met sur 0
-     * SINON 
-     */
 }
